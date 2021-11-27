@@ -15,8 +15,8 @@ Preferences pref;
 TaskHandle_t Acquisition;
 TaskHandle_t Calibration;
 int dureeRAZ = 4000;
-int dureeMAX = 8000;
-int dureeINIT = 2000;
+int dureeMAX = 6000;
+int dureeINIT = 1000;
 
 
 void tskAcquisition (void * pvparameters) {
@@ -30,17 +30,17 @@ void tskAcquisition (void * pvparameters) {
         x=bx-zx; 
 //        x=analogRead(xpin)-zx;    // JT
         delay(1);                 // JT
-        x=constrain(map(x,-mabsx, mabsx, 0, 127),0 , 127);
+        x=constrain(map(x,-(mabsx-zx), mabsx-zx, 0, 127),0 , 127);
         by=analogRead(ypin);
         y=by-zy; 
 //      y=analogRead(ypin)-zy;    // JT
         delay(1);                 // JT
-        y=constrain(map(y,-mabsy, mabsy, 0, 127),0 , 127);
+        y=constrain(map(y,-(mabsy-zy), mabsy-zy, 0, 127),0 , 127);
         bz=analogRead(zpin);
         z=bz-zz; 
 //      z=analogRead(zpin)-zz;    // JT
         delay(1);                            // JT  
-        z=constrain(map(z,-mabsz, mabsz, 0, 127),0 , 127);    
+        z=constrain(map(z,-(mabsz-zz), mabsz-zz, 0, 127),0 , 127);    
       xSemaphoreTake(mtxTFT, portMAX_DELAY);
       tft.fillRect(0, 32, 240, 18, TFT_BLACK);
       int w = map(x, 0, 250, 0, tft.width());
@@ -74,9 +74,7 @@ void calibrationZero() {
   zy=0;
   zz=0;
   Serial.println("Début calibration zéro");
-  Serial.println("On passe par là...");
   Serial.println("Valeur  zx : "+String(zx));
-  Serial.println("... mais pas par là...");
   Serial.println("Valeur zy : "+String(zy));
   Serial.println("Valeur zz : "+String(zz));
   temps_present = millis();
@@ -125,9 +123,9 @@ void calibrationMaximum() {
     mz = analogRead(zpin);               // JT
     delay (1);
     delay(1);                            // JT
-    mabsx = max(mabsx, abs(mx - zx));
-    mabsy = max(mabsy, abs(my - zy));
-    mabsz = max(mabsz, abs(mz - zz));
+    mabsx = max(mabsx, abs(mx));
+    mabsy = max(mabsy, abs(my));
+    mabsz = max(mabsz, abs(mz));
    Serial.println("Lecture X = valeur px : "+String(mx)+" valeur zx : "+String(zx)+" valeur mabsx : "+String(mabsx));
    Serial.println("Lecture Y = valeur py : "+String(my)+" valeur zy : "+String(zy)+" valeur mabsy : "+String(mabsy));
    Serial.println("Lecture Z = valeur pz : "+String(mz)+" valeur zz : "+String(zz)+" valeur mabsz : "+String(mabsz));
@@ -147,17 +145,17 @@ void initADXL() {
   zx = pref.getInt("zerox", 0); //JT
   zy = pref.getInt("zeroy", 0); //JT
   zz = pref.getInt("zeroz", 0); //JT
-  px = analogRead(xpin) - zx; // JT
-  delay(1);
-  px = constrain(map(px, -mabsx, mabsx, 0, 127), 0 , 127);
-  py = analogRead(ypin) - zy; // JT
-  delay(1);                 // JT
-  py = constrain(map(py, -mabsy, mabsy, 0, 127), 0 , 127);
-  pz = analogRead(zpin) - zz; // JT
-  delay(1);                            // JT
-  pz = constrain(map(pz, -mabsz, mabsz, 0, 127), 0 , 127);
-  x = px;
-  y = py;
-  z = pz;
+//  px = analogRead(xpin) - zx; // JT
+//  delay(1);
+//  px = constrain(map(px, -mabsx, mabsx, 0, 127), 0 , 127);
+//  py = analogRead(ypin) - zy; // JT
+//  delay(1);                 // JT
+//  py = constrain(map(py, -mabsy, mabsy, 0, 127), 0 , 127);
+//  pz = analogRead(zpin) - zz; // JT
+//  delay(1);                            // JT
+//  pz = constrain(map(pz, -mabsz, mabsz, 0, 127), 0 , 127);
+//  x = px;
+//  y = py;
+//  z = pz;
   Serial.println("init ADXL => OK");
 }
