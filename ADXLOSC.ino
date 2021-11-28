@@ -1,5 +1,5 @@
 
-String en_tete = "27/11/2021-7";
+String en_tete = "28/11/2021-1";
 
 #include "hlp_include.h"
 
@@ -34,13 +34,14 @@ setupOTA();
 button_init();
 
 // Création des tâches
-xTaskCreatePinnedToCore(tskHandleServer,"Serveur",10000,NULL,1,&Serveur,0);
-xTaskCreatePinnedToCore(tskAcquisition,"Acquisition",10000,NULL,9,&Acquisition,1);
+xTaskCreatePinnedToCore(tskHandleServer,"Serveur",10000,NULL,1,&Serveur,1);
+xTaskCreatePinnedToCore(tskAcquisition,"Acquisition",10000,NULL,8,&Acquisition,0);
+xTaskCreatePinnedToCore(tskButtonLoop,"Bouton",10000,NULL,8,&Bouton,0);
 }
 
 void loop()
 
 {
-  button_loop();
+//  button_loop();
   ArduinoOTA.handle();
 }

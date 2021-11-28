@@ -15,23 +15,20 @@ typedef struct MidiNote
 void midiNotePrint(void *xStruct)
 {
     MidiNote * data = (MidiNote *) xStruct;
-    printf("canal : %d\n", data->canal);
-    printf("note : %d\n", data->note);
-    printf("vel : %d\n", data->vel);
-    printf("duree : %d\n", data->duree);
+    printf("canal = %d note = %d velo = %d duree = %d\n", data->canal,data->note,data->vel,data->duree);
 }
 
 void playMidiNote(void *xStruct){
    MidiNote * note = (MidiNote *) xStruct;
    const TickType_t xDelay = note->duree;
    midiNotePrint(note);
-  Serial.println("Début Note");
+   printf ("%d : Début note :  %d \n",millis(),note->note); 
    OscWiFi.send(host, send_port, "/midi/noteon", note->canal  , note->note, note->vel);
    vTaskDelay(note->duree);
    OscWiFi.send(host, send_port, "/midi/noteoff", note->canal  , note->note, note->vel);
-   Serial.println("Fin Note");
+   printf ("%d  : Fin note - %d \n",millis(),note->note); 
+   printf("%d : Fin Tâche \n",millis());
    vTaskDelete(NULL);
-   Serial.println("Fin Tâche");
 }
 
 

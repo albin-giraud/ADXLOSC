@@ -17,11 +17,11 @@ TaskHandle_t Calibration;
 int dureeRAZ = 4000;
 int dureeMAX = 6000;
 int dureeINIT = 1000;
-
+boolean calibration = false;
 
 void tskAcquisition (void * pvparameters) {
   for (;;) {
-    boolean calibration = false;
+    
     if (!calibration) {
         px = x;
         py = y;
@@ -73,10 +73,7 @@ void calibrationZero() {
   zx=0;
   zy=0;
   zz=0;
-  Serial.println("Début calibration zéro");
-  Serial.println("Valeur  zx : "+String(zx));
-  Serial.println("Valeur zy : "+String(zy));
-  Serial.println("Valeur zz : "+String(zz));
+  printf("%d : Début calibration zéro \n",millis());
   temps_present = millis();
   while (millis() - temps_present < dureeRAZ){
 //  for (int i = 0; i < 4; i++) {
@@ -91,9 +88,9 @@ void calibrationZero() {
     zy += cy;                             // JT
     zz += cz;                             // JT
     delay(20);
-   Serial.println("Lecture X = indice "+String(nbMesure)+" valeur cx : "+String(cx)+" valeur cumulée zx : "+String(zx));
-   Serial.println("Lecture Y = indice "+String(nbMesure)+" valeur cy : "+String(cy)+" valeur cumulée zy : "+String(zy));
-   Serial.println("Lecture Z = indice "+String(nbMesure)+" valeur cz : "+String(cz)+" valeur cumulée zz : "+String(zz));
+//   Serial.println("Lecture X = indice "+String(nbMesure)+" valeur cx : "+String(cx)+" valeur cumulée zx : "+String(zx));
+//   Serial.println("Lecture Y = indice "+String(nbMesure)+" valeur cy : "+String(cy)+" valeur cumulée zy : "+String(zy));
+//   Serial.println("Lecture Z = indice "+String(nbMesure)+" valeur cz : "+String(cz)+" valeur cumulée zz : "+String(zz));
   }
   zx = zx / nbMesure;
   zy = zy / nbMesure;
@@ -102,11 +99,11 @@ void calibrationZero() {
   pref.putInt("zerox", zx); //JT
   pref.putInt("zeroy", zy); //JT
   pref.putInt("zeroz", zz); //JT
-  Serial.println("Sauvegarde des zéros");
+  printf("%d : Fin calibration zéro \n",millis());
 }
 
 void calibrationMaximum() {
-  Serial.println("Début  calibration maximum");
+  printf("%d : Début calibration max \n",millis());
   temps_present = millis();
   mabsx=0; // On supprime les valeurs actuelles
   mabsy=0;
@@ -121,24 +118,25 @@ void calibrationMaximum() {
     my = analogRead(ypin);               // JT
     delay(1);                            // JT
     mz = analogRead(zpin);               // JT
-    delay (1);
     delay(1);                            // JT
     mabsx = max(mabsx, abs(mx));
     mabsy = max(mabsy, abs(my));
     mabsz = max(mabsz, abs(mz));
-   Serial.println("Lecture X = valeur px : "+String(mx)+" valeur zx : "+String(zx)+" valeur mabsx : "+String(mabsx));
-   Serial.println("Lecture Y = valeur py : "+String(my)+" valeur zy : "+String(zy)+" valeur mabsy : "+String(mabsy));
-   Serial.println("Lecture Z = valeur pz : "+String(mz)+" valeur zz : "+String(zz)+" valeur mabsz : "+String(mabsz));
+//   Serial.println("Lecture X = valeur px : "+String(mx)+" valeur zx : "+String(zx)+" valeur mabsx : "+String(mabsx));
+//   Serial.println("Lecture Y = valeur py : "+String(my)+" valeur zy : "+String(zy)+" valeur mabsy : "+String(mabsy));
+//   Serial.println("Lecture Z = valeur pz : "+String(mz)+" valeur zz : "+String(zz)+" valeur mabsz : "+String(mabsz));
 
   }
   pref.putInt("maxx", mabsx); //JT
   pref.putInt("maxy", mabsy); //JT
   pref.putInt("maxz", mabsz); //JT
   delay(2);
-  Serial.println("Sauvegarde des maximums");
+  printf("%d : Fin calibration max \n",millis());
 }
 
 void initADXL() {
+printf("%d : Début initialisation de préférences \n",millis());
+
   mabsx = pref.getInt("maxx", 0); //JT
   mabsy = pref.getInt("maxy", 0); //JT
   mabsz = pref.getInt("maxz", 0); //JT
@@ -157,5 +155,5 @@ void initADXL() {
 //  x = px;
 //  y = py;
 //  z = pz;
-  Serial.println("init ADXL => OK");
+printf("%d : Fin initialisation des préférences \n",millis());
 }
