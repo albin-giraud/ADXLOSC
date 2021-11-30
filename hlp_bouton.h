@@ -31,7 +31,7 @@ void button_init()
     calibrationMaximum();
     printf("%d : Fin Appel calibration max \n",millis());
     delay(100);
-    printf("%d : Appel init pref",millis());
+    printf("%d : Appel init pref \n",millis());
     xTaskCreatePinnedToCore(playMidiNote,"InitADXL",10000,&noteC5,8,NULL,0);
     printf("%d : Retour task Appel init pref \n",millis());
     initADXL();
