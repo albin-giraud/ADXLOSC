@@ -14,14 +14,16 @@ long temps_present; // JT
 Preferences pref;
 TaskHandle_t Acquisition;
 TaskHandle_t Calibration;
-int dureeRAZ = 4000;
-int dureeMAX = 6000;
-int dureeINIT = 1000;
+int dureeMEP = 3000; // Durée de mise en place avant le lancement de l'action de calibration
+int dureeRAZ = 2000; // Durée de la mise à zéro
+int dureeMAX = 6000; // Durée de la calibration max
+int dureeINIT = 1000; // Durée de mise à jour des préférences.
 boolean calibration = false;
+SemaphoreHandle_t mtxCalib;
 
 void tskAcquisition (void * pvparameters) {
   for (;;) {
-    
+      xSemaphoreTake(mtxCalib, portMAX_DELAY);    
     if (!calibration) {
         px = x;
         py = y;
@@ -62,6 +64,7 @@ void tskAcquisition (void * pvparameters) {
         xSemaphoreGive(mtxTing);
       }
     }
+      xSemaphoreGive(mtxCalib);
   }
 }
 

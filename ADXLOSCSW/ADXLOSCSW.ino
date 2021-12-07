@@ -1,5 +1,5 @@
 
-String en_tete = "30/11/2021-1";
+String en_tete = "07/12/2021-5";
 
 #include "hlp_include.h"
 
@@ -25,6 +25,9 @@ Serial.println ("zz =   "+ (String)zz);
 mtxTing = xSemaphoreCreateMutex();
 mtxTFT = xSemaphoreCreateMutex();
 mtxOTA = xSemaphoreCreateMutex();
+mtxOSC = xSemaphoreCreateMutex();
+mtxCalib = xSemaphoreCreateMutex();
+
 
 // Paramétrage des services
 setupTFT(); 

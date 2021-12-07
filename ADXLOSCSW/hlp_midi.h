@@ -22,10 +22,14 @@ void playMidiNote(void *xStruct){
    MidiNote * note = (MidiNote *) xStruct;
    const TickType_t xDelay = note->duree;
    midiNotePrint(note);
-   printf ("%d : Début note :  %d \n",millis(),note->note); 
+   printf ("%d : Début note :  %d \n",millis(),note->note);
+   xSemaphoreTake(mtxOSC, portMAX_DELAY); 
    OscWiFi.send(host, send_port, "/midi/noteon", note->canal  , note->note, note->vel);
+   xSemaphoreGive(mtxOSC);
    vTaskDelay(note->duree);
+   xSemaphoreTake(mtxOSC, portMAX_DELAY); 
    OscWiFi.send(host, send_port, "/midi/noteoff", note->canal  , note->note, note->vel);
+   xSemaphoreGive(mtxOSC);
    printf ("%d  : Fin note - %d \n",millis(),note->note); 
    printf("%d : Fin Tâche \n",millis());
    vTaskDelete(NULL);
