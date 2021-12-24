@@ -2,9 +2,9 @@
 
 // WIFI
 //const char* ssid     = "DjiDji";
-//const char* password = "agaralca";
+//const char* password = "xx";
 const char* ssid     = "Noknok";
-const char* password = "431f4a027cf7";
+const char* password = "xx";
 //const char* ssid       = "Numericable-2ef0";  //  JT
 //const char* password   = "";  //  JT
 
