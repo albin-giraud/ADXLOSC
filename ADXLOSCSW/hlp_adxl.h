@@ -9,6 +9,7 @@ int x,y,z; //  Mesure temps t
 int zx, zy, zz; // Mesure temps zéro
 int px, py, pz; // Mesure temps -1
 int bx, by, bz; // Mesure brute
+int vx,vy,vz; // vitesse 
 int mabsx, mabsy, mabsz; // JT trouver les max en valeur absolue pour calibrer
 long temps_present; // JT
 Preferences pref;
@@ -20,51 +21,52 @@ int dureeMAX = 6000; // Durée de la calibration max
 int dureeINIT = 1000; // Durée de mise à jour des préférences.
 boolean calibration = false;
 SemaphoreHandle_t mtxCalib;
+PeakDetection peakDetectionX;
+int fenetreMoyenne = 20;
+MovingAverage<int> moyenneX(fenetreMoyenne);
+MovingAverage<int> moyenneY(fenetreMoyenne);
+MovingAverage<int> moyenneZ(fenetreMoyenne);
+
 
 void tskAcquisition (void * pvparameters) {
+  peakDetectionX.begin();
+  long momentpresent, momentpasse;
+  momentpresent=millis();
+  delay(6); // créer du passé...
   for (;;) {
-      xSemaphoreTake(mtxCalib, portMAX_DELAY);    
-    if (!calibration) {
+    momentpasse=momentpresent;
+    momentpresent=millis();    
         px = x;
         py = y;
         pz = z;
         bx=analogRead(xpin);
-        x=bx-zx; 
-//        x=analogRead(xpin)-zx;    // JT
+        x=bx-zx;
         delay(1);                 // JT
         x=constrain(map(x,-(mabsx-zx), mabsx-zx, 0, 127),0 , 127);
+        vx=abs((x-px)/(momentpresent-momentpasse));
+        moyenneX.push(x);
+        peakDetectionX.add((double)x);
+        int peakx = peakDetectionX.getPeak();
         by=analogRead(ypin);
         y=by-zy; 
-//      y=analogRead(ypin)-zy;    // JT
         delay(1);                 // JT
         y=constrain(map(y,-(mabsy-zy), mabsy-zy, 0, 127),0 , 127);
+        vy=abs((y-py)/(momentpresent-momentpasse));
+        moyenneY.push(y);
         bz=analogRead(zpin);
         z=bz-zz; 
-//      z=analogRead(zpin)-zz;    // JT
         delay(1);                            // JT  
         z=constrain(map(z,-(mabsz-zz), mabsz-zz, 0, 127),0 , 127);    
+        vz=abs((z-pz)/(momentpresent-momentpasse));
+        moyenneZ.push(z);
+
       xSemaphoreTake(mtxTFT, portMAX_DELAY);
       tft.fillRect(0, 32, 240, 18, TFT_BLACK);
       int w = map(x, 0, 250, 0, tft.width());
       tft.fillRect(0, 32, w, 18, TFT_YELLOW);
       xSemaphoreGive(mtxTFT);
 
-      String s1 = String(millis()) + ';' + String(x) + ';' + String(y) + ';' + String(z);
-      String s2 = String(millis()) + ';' + String(bx) + ';' + String(by) + ';' + String(bz);
-
-      OscWiFi.send(host, send_port, "/adxl",millis(),x,bx,y,by,z,bz);
-//      OscWiFi.send(host, send_port, "/trame",s1);
-//      OscWiFi.send(host, send_port, "/trame_brute",s2);
-      //Serial.println(s);
-
-      if (abs(px - x) > seuil) {
-        xSemaphoreTake(mtxTing, portMAX_DELAY);
-        ting = true;
-    //    Serial.println("<<<< TING >>>>");
-        xSemaphoreGive(mtxTing);
-      }
-    }
-      xSemaphoreGive(mtxCalib);
+      OscWiFi.send(host, send_port, "/adxl",(float)momentpresent,(float)x,(float)vx,(float)peakx ,(float) moyenneX.get(),(float)bx,(float)y,(float)vy,(float) moyenneY.get(),(float)by,(float)z,(float)vz,(float) moyenneZ.get(),(float)bz);
   }
 }
 

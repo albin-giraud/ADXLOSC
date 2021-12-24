@@ -1,4 +1,6 @@
+#include <MovingAverage.h>
 #include <ArduinoOSC.h>
+#include "PeakDetection.h"
 #include <WiFi.h>
 #include <TFT_eSPI.h>
 #include <WiFiClient.h>
