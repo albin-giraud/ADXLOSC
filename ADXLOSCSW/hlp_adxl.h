@@ -10,6 +10,7 @@ void tskAcquisition (void * pvparameters) {
        bx=analogRead(xpin);
        by=analogRead(ypin);
        bz=analogRead(zpin);
+       delay(1);
         OscWiFi.send(interne, port_interne, "/interne",(long)millis(),(int)bx,(int)by,(int)bz);
 //        OscWiFi.send(host, send_port, "/adxl",(float)millis(),(float)bx,(float)by,(float)bz);
   }

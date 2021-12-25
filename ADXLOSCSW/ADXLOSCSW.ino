@@ -31,11 +31,11 @@ setupOSC();
 
 // Création des tâches
 xTaskCreatePinnedToCore(tskAcquisition,"Acquisition",10000,NULL,8,&Acquisition,0);
-//xTaskCreatePinnedToCore(tskParseOSC,"OSC",10000,NULL,8,&OSC,1);
+xTaskCreatePinnedToCore(tskParseOSC,"OSC",10000,NULL,8,&OSC,1);
 
 }
 
 void loop()
 {
-  delay(100);
+  delay(1);
 }
