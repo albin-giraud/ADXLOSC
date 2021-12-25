@@ -14,7 +14,6 @@ int mabsx, mabsy, mabsz; // JT trouver les max en valeur absolue pour calibrer
 long temps_present; // JT
 Preferences pref;
 TaskHandle_t Acquisition;
-TaskHandle_t Calibration;
 int dureeMEP = 3000; // Durée de mise en place avant le lancement de l'action de calibration
 int dureeRAZ = 2000; // Durée de la mise à zéro
 int dureeMAX = 6000; // Durée de la calibration max

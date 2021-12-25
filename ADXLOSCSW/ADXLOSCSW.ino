@@ -1,6 +1,7 @@
-String en_tete = "24/12/2021-4";
-
-#include "hlp_include.h"
+#include "PeakDetection.h"
+#include "hlp_wifi.h"
+#include "hlp_osc.h"
+#include "hlp_adxl.h"
 
 void setup()
 {
@@ -10,33 +11,19 @@ Serial.println("Début Setup");
 
 pinMode(BPpin, INPUT_PULLUP);
 pref.begin("sauve", false);
-initADXL();
-Serial.println ("zz =   "+ (String)zz);
 
 // Mutex
-mtxTing = xSemaphoreCreateMutex();
-mtxTFT = xSemaphoreCreateMutex();
-mtxOTA = xSemaphoreCreateMutex();
-mtxOSC = xSemaphoreCreateMutex();
-mtxCalib = xSemaphoreCreateMutex();
 
 
 // Paramétrage des services
-setupTFT(); 
 setupWifi();
-setupServer();
-setupOTA();
-button_init();
 
 // Création des tâches
-xTaskCreatePinnedToCore(tskHandleServer,"Serveur",10000,NULL,1,&Serveur,1);
 xTaskCreatePinnedToCore(tskAcquisition,"Acquisition",10000,NULL,8,&Acquisition,0);
-xTaskCreatePinnedToCore(tskButtonLoop,"Bouton",10000,NULL,8,&Bouton,0);
 }
 
 void loop()
 
 {
-//  button_loop();
-  ArduinoOTA.handle();
+  
 }
