@@ -1,17 +1,10 @@
-// ADXL
-const int xpin = 36;
-const int ypin = 33;
-const int zpin = 32;
-int bx,by,bz; //  Mesure temps t
-TaskHandle_t Acquisition;
-
 void tskAcquisition (void * pvparameters) {
+  const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
   for (;;) {    
        bx=analogRead(xpin);
        by=analogRead(ypin);
        bz=analogRead(zpin);
-       delay(1);
-        OscWiFi.send(interne, port_interne, "/interne",(long)millis(),(int)bx,(int)by,(int)bz);
-//        OscWiFi.send(host, send_port, "/adxl",(float)millis(),(float)bx,(float)by,(float)bz);
+       vTaskDelay( xDelay );
+       OscWiFi.send(interne, port_interne, "/interne",(long)millis(),(int)bx,(int)by,(int)bz);
   }
 }
