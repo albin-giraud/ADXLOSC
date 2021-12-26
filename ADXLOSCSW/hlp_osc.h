@@ -28,6 +28,17 @@ void cbParam(const OscMessage& m) {
   else if (param == "MaxZ") {
     pref.putInt("MaxZ", m.arg<int>(1));
   }
+   else if (param == "PeakDetectLag") {
+    pref.putInt("PeakDetectLag", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectThrs") {
+    pref.putInt("PeakDetectThrs", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectInfluence") {
+    pref.putDouble("PeakDetectInfluence", m.arg<double>(1));
+  }
+
+
 }
 
 void cbStatut(const OscMessage& m) {
@@ -42,6 +53,9 @@ void cbStatut(const OscMessage& m) {
   Serial.println(pref.getInt("MaxX", 0));
   Serial.println(pref.getInt("MaxY", 0));
   Serial.println(pref.getInt("MaxZ", 0));
+  Serial.println(pref.getInt("PeakDetectLag", 0));
+  Serial.println(pref.getInt("PeakDetectThrs", 0));
+  Serial.println(pref.getDouble("PeakDetectInfluence", 0));
 }
 
 void cbCalcul(const OscMessage& m) {
@@ -81,13 +95,18 @@ void cbCalcul(const OscMessage& m) {
   OscWiFi.send(ipcible, send_port, "/adxl", (float)millis(), (float)x, (float)vx, (float)peakx , (float) moyenneX.get(), (float)rx, (float)y, (float)vy, (float)peaky , (float) moyenneY.get(), (float)ry, (float)z, (float)vz, (float)peakz , (float) moyenneZ.get(), (float)rz);
 }
 
+void initPeakDetection(){
+  peakDetectionX.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
+  peakDetectionY.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
+  peakDetectionZ.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
+}
+
 void setupOSC() {
 
-  peakDetectionX.begin(); // A tuner
-  peakDetectionY.begin(); // A tuner
-  peakDetectionZ.begin(); // A tuner
+ initPeakDetection();
 
   OscWiFi.subscribe(receive_port, "/statut", cbStatut);
   OscWiFi.subscribe(receive_port, "/param", cbParam);
   OscWiFi.subscribe(port_interne, "/interne", cbCalcul);
+  OscWiFi.subscribe(receive_port, "/razpique", initPeakDetection);
 }
