@@ -1,4 +1,5 @@
 Preferences pref;
+String en_tete= "01/01/2022-2";
 //const char* host = "192.168.1.16";
 String ipcible = "192.168.1.16";
 const char* interne = "192.168.1.31";
@@ -14,10 +15,6 @@ int rx, ry, rz; // ???
 int peakx, peaky, peakz; // pic
 int mabsx, mabsy, mabsz; // JT trouver les max en valeur absolue pour calibrer
 PeakDetection peakDetectionX, peakDetectionY, peakDetectionZ;
-int fenetreMoyenne = 10;
-MovingAverage<int> moyenneX(fenetreMoyenne);
-MovingAverage<int> moyenneY(fenetreMoyenne);
-MovingAverage<int> moyenneZ(fenetreMoyenne);
 TaskHandle_t OSC;
 const int xpin = 36;
 const int ypin = 33;

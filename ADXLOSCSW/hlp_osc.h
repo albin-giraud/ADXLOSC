@@ -1,9 +1,16 @@
+int fenetreMoyenne = pref.getInt("PopMoyenne",10);
+MovingAverage<int> moyenneX(fenetreMoyenne);
+MovingAverage<int> moyenneY(fenetreMoyenne);
+MovingAverage<int> moyenneZ(fenetreMoyenne);
+
 void tskParseOSC (void * pvparameters) {
   Serial.print("Début tâche OSC");
   for (;;) {
     OscWiFi.parse();
   }
 }
+
+
 
 void cbParam(const OscMessage& m) {
   String param = m.arg<String>(0);
@@ -37,11 +44,41 @@ void cbParam(const OscMessage& m) {
    else if (param == "PeakDetectInfluence") {
     pref.putDouble("PeakDetectInfluence", m.arg<double>(1));
   }
-
+   else if (param == "PopMoyenne") {
+    pref.putInt("PopMoyenne", m.arg<int>(1));
+  }
 
 }
 
+void afficherParam(){
+  clearScreen();
+  int hauteur = 17;
+  int largeur = 122;
+  tft.setTextSize(2);
+  // X
+  tft.setCursor(0, hauteur);
+  tft.setTextColor(TFT_CYAN); 
+  tft.printf("ZX : %i XM : %i",zx, mabsx);
+
+  // Y
+  tft.setTextColor(TFT_MAGENTA); 
+  tft.setCursor(0, hauteur*2);
+  tft.printf("ZY : %i YM : %i",zy, mabsy);
+  
+  // Z
+  tft.setTextColor(TFT_YELLOW); 
+  tft.setCursor(0, hauteur*3);
+  tft.printf("ZZ : %i ZM : %i",zz, mabsz);
+  
+  // PeakDetection
+  tft.setTextColor(TFT_ORANGE); 
+  tft.setCursor(0, hauteur*5);
+  tft.printf("L %i - T %i - I %.2f",peakDetectionX.lag,peakDetectionX.threshold,peakDetectionX.influence);
+  
+}
+
 void cbStatut(const OscMessage& m) {
+  afficherParam();
   Serial.println(m.remoteIP());
   Serial.println(m.remotePort());
   Serial.println(m.address());
@@ -56,6 +93,7 @@ void cbStatut(const OscMessage& m) {
   Serial.println(pref.getInt("PeakDetectLag", 0));
   Serial.println(pref.getInt("PeakDetectThrs", 0));
   Serial.println(pref.getDouble("PeakDetectInfluence", 0));
+  Serial.println(pref.getInt("PopMoyenne", 0));
 }
 
 void cbCalcul(const OscMessage& m) {
@@ -101,6 +139,13 @@ void initPeakDetection(){
   peakDetectionZ.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
 }
 
+void cbRaz(){
+  clearScreen();
+  tft.drawString("RAZ",0,20);
+  ESP.restart();
+}
+
+
 void setupOSC() {
 
  initPeakDetection();
@@ -109,4 +154,6 @@ void setupOSC() {
   OscWiFi.subscribe(receive_port, "/param", cbParam);
   OscWiFi.subscribe(port_interne, "/interne", cbCalcul);
   OscWiFi.subscribe(receive_port, "/razpique", initPeakDetection);
+  OscWiFi.subscribe(receive_port, "/raz", cbRaz);
+  
 }
