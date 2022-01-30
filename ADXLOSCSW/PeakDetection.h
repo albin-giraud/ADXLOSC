@@ -39,8 +39,10 @@ class PeakDetection {
     void add(double);
     double getFilt();
     double getPeak();
+    double getDeviation();
     int index, lag, threshold, peak;
   double influence;
+  double deviation;
   private:
 //   int index, lag, threshold, peak;
 //    double influence, EPSILON, *data, *avg, *std;

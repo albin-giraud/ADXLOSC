@@ -125,6 +125,12 @@ void cbStatut(const OscMessage& m) {
   Serial.println(pref.getInt("PeakDetectLagX", 0));
   Serial.println(pref.getInt("PeakDetectThrsX", 0));
   Serial.println(pref.getDouble("PeakDetectInfluenceX", 0));
+  Serial.println(pref.getInt("PeakDetectLagY", 0));
+  Serial.println(pref.getInt("PeakDetectThrsY", 0));
+  Serial.println(pref.getDouble("PeakDetectInfluenceY", 0));
+  Serial.println(pref.getInt("PeakDetectLagZ", 0));
+  Serial.println(pref.getInt("PeakDetectThrsZ", 0));
+  Serial.println(pref.getDouble("PeakDetectInfluenceZ", 0));
   Serial.println(pref.getInt("PopMoyenne", 0));
 }
 
@@ -137,6 +143,7 @@ void cbCalcul(const OscMessage& m) {
   vx = abs(x - px); // On calcule la vitesse
   moyenneX.push(x); // On met à jour la moyenne glissante
   peakDetectionX.add((double)x); // On met à jour la pile pour la détection du pic.
+  printf("Déviation X : %f \n",peakDetectionX.getDeviation());
   peakx = peakDetectionX.getPeak(); // On tente une détection
 
   // On refait la même chose pour l'axe Y
@@ -162,13 +169,41 @@ void cbCalcul(const OscMessage& m) {
   // On compose et envoie le message OSC
   //OscWiFi.send(ipcible, send_port, "/adxl", (float)millis(), (float)x, (float)y, (float)z);
 
+/*
+ * 1 - Timecode
+ * 
+ * ===== X =======
+ * 
+ * 2 - X calibré
+ * 3 - Vitesse X
+ * 4 - pic X
+ * 5 - Moyenne X
+ * 6 - X brut
+ * 
+ * ===== Y =======
+ * 
+ * 7 - Y calibré
+ * 8 - Vitesse Y
+ * 9 - pic Y
+ * 10 - Moyenne Y
+ * 11 - Y brut
+ * 
+ * ===== Z =======
+ * 
+ * 12 - Z calibré
+ * 13 - Vitesse Z
+ * 14 - pic Z
+ * 15 - Moyenne Z
+ * 16 - Z brut
+ */
+
   OscWiFi.send(ipcible, send_port, "/adxl", (float)millis(), (float)x, (float)vx, (float)peakx , (float) moyenneX.get(), (float)rx, (float)y, (float)vy, (float)peaky , (float) moyenneY.get(), (float)ry, (float)z, (float)vz, (float)peakz , (float) moyenneZ.get(), (float)rz);
 }
 
 void initPeakDetection(){
-  peakDetectionX.begin(pref.getInt("PeakDetectLagX",24),pref.getInt("PeakDetectThrsX",2),pref.getDouble("PeakDetectInfluenceX",0.05)); // A tuner
-  peakDetectionY.begin(pref.getInt("PeakDetectLagY",24),pref.getInt("PeakDetectThrsY",2),pref.getDouble("PeakDetectInfluenceY",0.05)); // A tuner
-  peakDetectionZ.begin(pref.getInt("PeakDetectLagZ",24),pref.getInt("PeakDetectThrsZ",2),pref.getDouble("PeakDetectInfluenceZ",0.05)); // A tuner
+  peakDetectionX.begin(pref.getInt("PeakDetectLagX",24),pref.getInt("PeakDetectThrsX",2),pref.getDouble("PeakDetectInfluenceX",0.0)); // A tuner
+  peakDetectionY.begin(pref.getInt("PeakDetectLagY",24),pref.getInt("PeakDetectThrsY",2),pref.getDouble("PeakDetectInfluenceY",0.0)); // A tuner
+  peakDetectionZ.begin(pref.getInt("PeakDetectLagZ",24),pref.getInt("PeakDetectThrsZ",2),pref.getDouble("PeakDetectInfluenceZ",0.0)); // A tuner
 }
 
 void cbRaz(){

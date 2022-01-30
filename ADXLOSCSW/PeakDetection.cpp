@@ -62,6 +62,7 @@ void PeakDetection::begin(int lag, int threshold, double influence) {
   this->lag = lag;
   this->threshold = threshold;
   this->influence = influence;
+  deviation = 0;
   data = (double *)malloc(sizeof(double) * (lag + 1));
   avg = (double *)malloc(sizeof(double) * (lag + 1));
   std = (double *)malloc(sizeof(double) * (lag + 1));
@@ -76,7 +77,8 @@ void PeakDetection::add(double newSample) {
   peak = 0;
   int i = index % lag; //current index
   int j = (index + 1) % lag; //next index
-  double deviation = newSample - avg[i];
+//  double deviation = newSample - avg[i];
+  deviation = newSample - avg[i];
   if (deviation > threshold * std[i]) {
     data[j] = influence * newSample + (1.0 - influence) * data[i];
     peak = 1;
@@ -101,6 +103,10 @@ double PeakDetection::getFilt() {
 
 double PeakDetection::getPeak() {
   return peak;
+}
+
+double PeakDetection::getDeviation() {
+  return deviation;
 }
 
 double PeakDetection::getAvg(int start, int len) {
