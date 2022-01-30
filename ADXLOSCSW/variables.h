@@ -1,8 +1,10 @@
 Preferences pref;
-String en_tete= "01/01/2022-2";
+String en_tete= "17/01/2022-2";
 //const char* host = "192.168.1.16";
-String ipcible = "192.168.1.16";
-const char* interne = "192.168.1.31";
+String ipcible = "192.168.1.18";
+//String ipcible = "192.168.43.224";
+const char* interne = "192.168.1.23";
+//const char* interne = "192.168.43.253";
 const int port_interne = 11999;
 //const char* host = "192.168.43.224";
 const int send_port = 6448;

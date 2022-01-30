@@ -35,24 +35,45 @@ void cbParam(const OscMessage& m) {
   else if (param == "MaxZ") {
     pref.putInt("MaxZ", m.arg<int>(1));
   }
-   else if (param == "PeakDetectLag") {
-    pref.putInt("PeakDetectLag", m.arg<int>(1));
+   else if (param == "PeakDetectLagX") {
+    pref.putInt("PeakDetectLagX", m.arg<int>(1));
   }
-   else if (param == "PeakDetectThrs") {
-    pref.putInt("PeakDetectThrs", m.arg<int>(1));
+   else if (param == "PeakDetectThrsX") {
+    pref.putInt("PeakDetectThrsX", m.arg<int>(1));
   }
-   else if (param == "PeakDetectInfluence") {
-    pref.putDouble("PeakDetectInfluence", m.arg<double>(1));
+   else if (param == "PeakDetectInfluenceX") {
+    pref.putDouble("PeakDetectInfluenceX", m.arg<double>(1));
+  }
+     else if (param == "PeakDetectLagY") {
+    pref.putInt("PeakDetectLagY", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectThrsY") {
+    pref.putInt("PeakDetectThrsY", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectInfluenceY") {
+    pref.putDouble("PeakDetectInfluenceY", m.arg<double>(1));
+  }
+     else if (param == "PeakDetectLagZ") {
+    pref.putInt("PeakDetectLagZ", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectThrsZ") {
+    pref.putInt("PeakDetectThrsZ", m.arg<int>(1));
+  }
+   else if (param == "PeakDetectInfluenceZ") {
+    pref.putDouble("PeakDetectInfluenceZ", m.arg<double>(1));
   }
    else if (param == "PopMoyenne") {
     pref.putInt("PopMoyenne", m.arg<int>(1));
+  }
+     else if (param == "Delai") {
+    pref.putInt("Delai", m.arg<int>(1));
   }
 
 }
 
 void afficherParam(){
   clearScreen();
-  int hauteur = 17;
+  int hauteur = 15;
   int largeur = 122;
   tft.setTextSize(2);
   // X
@@ -69,11 +90,22 @@ void afficherParam(){
   tft.setTextColor(TFT_YELLOW); 
   tft.setCursor(0, hauteur*3);
   tft.printf("ZZ : %i ZM : %i",zz, mabsz);
+
   
   // PeakDetection
   tft.setTextColor(TFT_ORANGE); 
-  tft.setCursor(0, hauteur*5);
+  tft.setCursor(0, (10+hauteur*4));
   tft.printf("L %i - T %i - I %.2f",peakDetectionX.lag,peakDetectionX.threshold,peakDetectionX.influence);
+  tft.setCursor(0, (10+hauteur*5));
+  tft.printf("L %i - T %i - I %.2f",peakDetectionY.lag,peakDetectionY.threshold,peakDetectionY.influence);
+    tft.setCursor(0, (10+hauteur*6));
+  tft.printf("L %i - T %i - I %.2f",peakDetectionZ.lag,peakDetectionZ.threshold,peakDetectionZ.influence);
+  // IP
+  tft.setTextSize(1);
+  tft.setTextColor(TFT_GREENYELLOW); 
+  tft.setCursor(0, 10+hauteur*7);
+  tft.print("IP : ");
+  tft.print(WiFi.localIP());
   
 }
 
@@ -90,9 +122,9 @@ void cbStatut(const OscMessage& m) {
   Serial.println(pref.getInt("MaxX", 0));
   Serial.println(pref.getInt("MaxY", 0));
   Serial.println(pref.getInt("MaxZ", 0));
-  Serial.println(pref.getInt("PeakDetectLag", 0));
-  Serial.println(pref.getInt("PeakDetectThrs", 0));
-  Serial.println(pref.getDouble("PeakDetectInfluence", 0));
+  Serial.println(pref.getInt("PeakDetectLagX", 0));
+  Serial.println(pref.getInt("PeakDetectThrsX", 0));
+  Serial.println(pref.getDouble("PeakDetectInfluenceX", 0));
   Serial.println(pref.getInt("PopMoyenne", 0));
 }
 
@@ -134,9 +166,9 @@ void cbCalcul(const OscMessage& m) {
 }
 
 void initPeakDetection(){
-  peakDetectionX.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
-  peakDetectionY.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
-  peakDetectionZ.begin(pref.getInt("PeakDetectLag",24),pref.getInt("PeakDetectThrs",2),pref.getDouble("PeakDetectInfluence",0.5)); // A tuner
+  peakDetectionX.begin(pref.getInt("PeakDetectLagX",24),pref.getInt("PeakDetectThrsX",2),pref.getDouble("PeakDetectInfluenceX",0.05)); // A tuner
+  peakDetectionY.begin(pref.getInt("PeakDetectLagY",24),pref.getInt("PeakDetectThrsY",2),pref.getDouble("PeakDetectInfluenceY",0.05)); // A tuner
+  peakDetectionZ.begin(pref.getInt("PeakDetectLagZ",24),pref.getInt("PeakDetectThrsZ",2),pref.getDouble("PeakDetectInfluenceZ",0.05)); // A tuner
 }
 
 void cbRaz(){

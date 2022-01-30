@@ -1,5 +1,7 @@
 void tskAcquisition (void * pvparameters) {
-  const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
+//  const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
+ const TickType_t xDelay = pref.getInt("Delai",1) / portTICK_PERIOD_MS;
+    
   for (;;) {    
        bx=analogRead(xpin);
        vTaskDelay( xDelay );
