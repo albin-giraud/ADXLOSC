@@ -8,10 +8,15 @@ void setupOTA()
       type = "sketch";
       else // U_SPIFFS
       type = "filesystem";
+  clearScreen();
+  tft.drawString("MAJ en cours",0,20);
     })
 //???????????????????????
     .onEnd([]() 
     {
+  clearScreen();
+  tft.drawString("MAJ OK",0,20);
+  ESP.restart();
     })
 //???????????????
   .onProgress([](unsigned int progress, unsigned int total) {
